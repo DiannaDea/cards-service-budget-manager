@@ -1,0 +1,12 @@
+{
+  "app": {
+      "port": "APP_PORT"
+  },
+  "db": {
+      "host": "POSTGRES_HOST",
+      "port": "POSTGRES_PORT",
+      "name": "POSTGRES_DB",
+      "user": "POSTGRES_USER",
+      "password": "POSTGRES_PASSWORD"
+  }
+}
