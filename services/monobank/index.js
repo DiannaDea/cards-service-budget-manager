@@ -1,22 +1,23 @@
 const requester = require('../requester');
-const { convertBalanceInfo } = require('./converter');
+const { convertBalanceInfo, convertTransactions } = require('./converter');
 
 const routerConfig = {
   '/personal/client-info': {
     converter: (response) => convertBalanceInfo(response),
   },
-  '/rest_fiz': {
+  '/personal/statement': {
     requester: (merchant, { card, startDate, endDate }) => (
       merchant.createStatementsRequestBody(card, startDate, endDate)
     ),
-    converter: () => {},
+    converter: (response) => convertTransactions(response),
   },
 };
 
 const requestMonobank = (url, requestInfo) => {
   const { token } = requestInfo;
 
-  const config = routerConfig[url];
+  const route = Object.keys(routerConfig).find((r) => url.includes(r));
+  const config = routerConfig[route];
 
   const options = {
     uri: `https://api.monobank.ua${url}`,

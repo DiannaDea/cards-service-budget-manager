@@ -16,6 +16,7 @@
     "koa-logger": "^3.2.1",
     "koa-respond": "^2.1.0",
     "lodash": "^4.17.15",
+    "luxon": "^1.23.0",
     "pg": "^8.0.3",
     "pg-hstore": "^2.3.3",
     "request": "^2.88.2",

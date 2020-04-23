@@ -1,4 +1,6 @@
+/* eslint-disable arrow-body-style */
 const { get } = require('lodash');
+const { DateTime } = require('luxon');
 
 const convertBalanceInfo = (response) => {
   const cardBalance = get(response, 'accounts.0');
@@ -12,6 +14,25 @@ const convertBalanceInfo = (response) => {
   };
 };
 
+const convertDate = (dateTime) => DateTime
+  .fromSeconds(dateTime)
+  .toUTC()
+  .toISO();
+
+const convertTransactions = (response = []) => {
+  return response.map((statement) => {
+    const date = get(statement, 'time');
+
+    return {
+      date: convertDate(date),
+      operationAmount: get(statement, 'operationAmount'),
+      balance: get(statement, 'balance'),
+      description: get(statement, 'description'),
+    };
+  });
+};
+
 module.exports = {
   convertBalanceInfo,
+  convertTransactions,
 };

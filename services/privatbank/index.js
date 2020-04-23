@@ -1,6 +1,6 @@
 const requester = require('../requester');
 const PrivatBankApi = require('./PrivatBankApi');
-const { convertBalanceInfo } = require('./converter');
+const { convertBalanceInfo, convertTransactions } = require('./converter');
 
 const routerConfig = {
   '/balance': {
@@ -13,7 +13,7 @@ const routerConfig = {
     requester: (merchant, { card, startDate, endDate }) => (
       merchant.createStatementsRequestBody(card, startDate, endDate)
     ),
-    converter: () => {},
+    converter: (response) => convertTransactions(response),
   },
 };
 
