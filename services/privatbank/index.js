@@ -1,20 +1,27 @@
 const requester = require('../requester');
 const PrivatBankApi = require('./PrivatBankApi');
+const { convertBalanceInfo } = require('./converter');
 
-const requestBody = {
-  '/balance': (merchant, { card }) => (
-    merchant.createBalanceRequestBody(card)
-  ),
-  '/rest_fiz': (merchant, { card, startDate, endDate }) => (
-    merchant.createStatementsRequestBody(card, startDate, endDate)
-  ),
+const routerConfig = {
+  '/balance': {
+    requester: (merchant, { card }) => (
+      merchant.createBalanceRequestBody(card)
+    ),
+    converter: (response) => convertBalanceInfo(response),
+  },
+  '/rest_fiz': {
+    requester: (merchant, { card, startDate, endDate }) => (
+      merchant.createStatementsRequestBody(card, startDate, endDate)
+    ),
+    converter: () => {},
+  },
 };
 
 const requestPrivatBank = (url, requestInfo) => {
   const merchant = new PrivatBankApi(requestInfo);
 
-  const requestBodyXmlFund = requestBody[url];
-  const xmlBody = requestBodyXmlFund(merchant, requestInfo);
+  const config = routerConfig[url];
+  const xmlBody = config.requester(merchant, requestInfo);
 
   const options = {
     method: 'POST',
@@ -29,7 +36,7 @@ const requestPrivatBank = (url, requestInfo) => {
 
   return requester(options).then((res) => {
     const convered = PrivatBankApi.convertBodyToJson(res);
-    return convered;
+    return config.converter(JSON.parse(convered));
   });
 };
 
