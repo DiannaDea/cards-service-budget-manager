@@ -1,5 +1,8 @@
+/* eslint-disable no-useless-escape */
 const { get } = require('lodash');
 const { DateTime } = require('luxon');
+
+const AMOUNT_REGEX = /(?<amount>[-0-9\.]+)\s(?<currency>[A-Z]+)/;
 
 const convertBalanceInfo = (response) => {
   const cardBalance = get(response, 'response.data.info.cardbalance');
@@ -18,6 +21,19 @@ const convertDate = (date, time) => DateTime
   .toUTC()
   .toISO();
 
+const converMoney = (money) => {
+  if (!AMOUNT_REGEX.test(money)) {
+    return { amount: null, currency: null };
+  }
+
+  const { groups: { amount, currency } } = AMOUNT_REGEX.exec(money);
+
+  return {
+    amount: parseFloat(amount),
+    currency,
+  };
+};
+
 const convertTransactions = (response) => {
   const statements = get(response, 'response.data.info.statements.statement', []);
 
@@ -30,11 +46,15 @@ const convertTransactions = (response) => {
     const date = get(attributes, 'trandate');
     const time = get(attributes, 'trantime');
 
+    const operationAmount = converMoney(get(attributes, 'cardamount'));
+    const balance = converMoney(get(attributes, 'rest'));
+
     return {
       date: convertDate(date, time),
-      operationAmount: get(attributes, 'cardamount'),
-      balance: get(attributes, 'rest'),
+      operationAmount: operationAmount.amount,
+      balance: balance.amount,
       description: `${description} ${terminal}`,
+      currency: operationAmount.currency,
     };
   });
 };
