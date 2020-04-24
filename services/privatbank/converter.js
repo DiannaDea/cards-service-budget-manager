@@ -10,8 +10,8 @@ const convertBalanceInfo = (response) => {
   return {
     cardNumber: get(cardBalance, 'card.card_number._text'),
     currency: get(cardBalance, 'card.currency._text'),
-    balance: get(cardBalance, 'balance._text'),
-    limit: get(cardBalance, 'fin_limit._text'),
+    balance: parseFloat(get(cardBalance, 'balance._text')),
+    limit: parseFloat(get(cardBalance, 'fin_limit._text')),
     clientName: null,
   };
 };

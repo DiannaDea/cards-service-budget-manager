@@ -8,8 +8,8 @@ const convertBalanceInfo = (response) => {
   return {
     cardNumber: null,
     currency: get(cardBalance, 'cashbackType'),
-    balance: get(cardBalance, 'balance'),
-    limit: get(cardBalance, 'creditLimit'),
+    balance: (get(cardBalance, 'balance')) / 100,
+    limit: (get(cardBalance, 'creditLimit')) / 100,
     clientName: get(response, 'name'),
   };
 };
