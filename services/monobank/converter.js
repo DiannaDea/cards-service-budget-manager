@@ -6,7 +6,7 @@ const convertBalanceInfo = (response) => {
   const cardBalance = get(response, 'accounts.0');
 
   return {
-    cardNumber: null,
+    cardNumber: get(cardBalance, 'maskedPan.0'),
     currency: get(cardBalance, 'cashbackType'),
     balance: (get(cardBalance, 'balance')) / 100,
     limit: (get(cardBalance, 'creditLimit')) / 100,
@@ -24,6 +24,7 @@ const convertTransactions = (response = []) => {
     const date = get(statement, 'time');
 
     return {
+      externalId: get(statement, 'id'),
       date: convertDate(date),
       operationAmount: (get(statement, 'operationAmount')) / 100,
       balance: (get(statement, 'balance')) / 100,

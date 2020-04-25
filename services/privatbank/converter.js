@@ -50,6 +50,7 @@ const convertTransactions = (response) => {
     const balance = converMoney(get(attributes, 'rest'));
 
     return {
+      externalId: get(attributes, 'appcode'),
       date: convertDate(date, time),
       operationAmount: operationAmount.amount,
       balance: balance.amount,
