@@ -3,7 +3,7 @@
     "username": "root",
     "password": "password123",
     "database": "cards-service",
-    "host": "127.0.0.1",
+    "host": "db",
     "dialect": "postgres"
   },
   "test": {

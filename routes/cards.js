@@ -13,9 +13,15 @@ cardsRouter.route({
   validate: {
     type: 'json',
     body: {
-      monobankToken: Joi.string().required(),
-      privatMerchantId: Joi.string().required(),
-      privatMerchantSignature: Joi.string().required(),
+      monobank: Joi.object({
+        token: Joi.string().required(),
+        cardNumber: Joi.string().required(),
+      }),
+      privatbank: Joi.object({
+        merchantId: Joi.string().required(),
+        password: Joi.string().required(),
+        cardNumber: Joi.string().required(),
+      }),
     },
   },
   handler: [CardsController.auth],
