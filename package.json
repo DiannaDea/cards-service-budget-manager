@@ -7,7 +7,11 @@
     "start": "node ./server",
     "start-dev": "./node_modules/nodemon/bin/nodemon.js ./server",
     "docker:start": "docker-compose up",
-    "docker:stop": "docker-compose down"
+    "docker:stop": "docker-compose down",
+    "db:migrate": "./node_modules/.bin/sequelize db:migrate",
+    "db:migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo:all",
+    "db:seed": "./node_modules/.bin/sequelize db:seed:all",
+    "db:seed:undo": "./node_modules/.bin/sequelize db:seed:undo:all"
   },
   "dependencies": {
     "config": "^3.3.1",
