@@ -24,7 +24,7 @@ module.exports = {
         key: 'id',
       },
     },
-    number: {
+    cardNumber: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -33,16 +33,15 @@ module.exports = {
       allowNull: false,
     },
     balance: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.FLOAT,
       allowNull: false,
     },
     limit: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.FLOAT,
       allowNull: false,
     },
     clientName: {
       type: Sequelize.STRING,
-      allowNull: false,
     },
     createdAt: {
       allowNull: false,

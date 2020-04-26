@@ -3,10 +3,10 @@ module.exports = (sequelize, DataTypes) => {
     groupId: DataTypes.STRING,
     bankId: DataTypes.NUMBER,
     cardAuthId: DataTypes.NUMBER,
-    number: DataTypes.STRING,
+    cardNumber: DataTypes.STRING,
     currency: DataTypes.STRING,
-    balance: DataTypes.NUMBER,
-    limit: DataTypes.NUMBER,
+    balance: DataTypes.FLOAT,
+    limit: DataTypes.FLOAT,
     clientName: DataTypes.STRING,
   }, {});
 

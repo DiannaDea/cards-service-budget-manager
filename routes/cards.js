@@ -33,7 +33,8 @@ cardsRouter.route({
   validate: {
     type: 'json',
     body: {
-      groupId: Joi.number().required(),
+      cardNumber: Joi.string().required(),
+      groupId: Joi.string().required(),
       bankId: Joi.number().required(),
       authId: Joi.number().required(),
     },

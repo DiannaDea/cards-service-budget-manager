@@ -4,6 +4,7 @@ module.exports = {
   up: async (queryInterface) => {
     const banks = await Promise.all(bankNames.map((bank) => ({
       name: bank,
+      internalName: bank.toLocaleLowerCase(),
       createdAt: new Date(),
       updatedAt: new Date(),
     })));

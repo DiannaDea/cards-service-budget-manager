@@ -1,7 +1,21 @@
 const requestMonobank = require('../services/monobank');
 const requestPrivatBank = require('../services/privatbank');
 
-const CardAuthController = require('../repositories/card-auth');
+const CardAuthRepository = require('../repositories/card-auth');
+const BankRepository = require('../repositories/bank');
+const CardRepository = require('../repositories/card');
+
+const cardAuthConverter = {
+  monobank: (cardAuth, cardNumber) => ({
+    token: cardAuth.monobankToken,
+    cardNumber,
+  }),
+  privatbank: (cardAuth, cardNumber) => ({
+    merchantId: cardAuth.privatMerchantId,
+    password: cardAuth.privatMerchantSignature,
+    cardNumber,
+  }),
+};
 
 const balanceStrategies = {
   monobank: async ({ token, cardNumber }) => {
@@ -67,24 +81,55 @@ const CardsController = {
 
     const cardAuthDetails = cardAuthStrategies[strategy](bankDetails);
 
-    if (await CardAuthController.findOne(cardAuthDetails)) {
+    if (await CardAuthRepository.findOne(cardAuthDetails)) {
       return ctx.send(200, 'Bank already authed');
     }
 
-    const balance = await balanceStrategies[strategy](bankDetails);
+    const bank = await BankRepository.findOne({ internalName: strategy });
 
+    const balance = await balanceStrategies[strategy](bankDetails);
     if (!balance) {
       return ctx.send(401, { authId: null, success: false, message: 'Invalid card' });
     }
 
-    const cardAuth = await CardAuthController.create(cardAuthDetails);
+    const cardAuth = await CardAuthRepository.create(cardAuthDetails);
 
     return ctx.send(200, {
+      cardNumber: bankDetails.cardNumber,
+      bankId: bank.id,
       authId: cardAuth.id,
       success: true,
     });
   },
-  create: (ctx) => ctx.send(200, 'create'),
+  create: async (ctx) => {
+    const {
+      groupId, bankId, authId, cardNumber,
+    } = ctx.request.body;
+
+    const cardAuth = await CardAuthRepository.findOne({ id: authId });
+    if (!cardAuth) {
+      return ctx.send(404, 'Bank not authed');
+    }
+
+    const bank = await BankRepository.findOne({ id: bankId });
+    if (!bank) {
+      return ctx.send(404, 'Bank not authed');
+    }
+
+    const strategy = bank.internalName;
+
+    const bankDetails = cardAuthConverter[strategy](cardAuth, cardNumber);
+    const balance = await balanceStrategies[strategy](bankDetails);
+
+    const card = await CardRepository.create({
+      groupId,
+      bankId,
+      cardAuthId: authId,
+      ...balance,
+    });
+
+    return ctx.send(200, card);
+  },
   update: (ctx) => ctx.send(200, 'update'),
   delete: (ctx) => ctx.send(200, 'delete'),
 };
