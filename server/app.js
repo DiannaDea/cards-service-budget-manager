@@ -3,10 +3,13 @@ const respond = require('koa-respond');
 const logger = require('koa-logger');
 
 const { routes } = require('../routes');
+const runCron = require('../services/cron');
 
 require('../db/connection');
 
 const app = new Koa();
+
+runCron();
 
 app.use(respond());
 app.use(logger());

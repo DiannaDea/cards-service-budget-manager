@@ -76,9 +76,12 @@ const getCardTransactions = async (card) => {
   const strategy = get(card, 'bank.internalName');
   const bankDetails = cardAuthConverter[strategy](card);
 
+  const now = DateTime.local();
+  const yesterday = now.minus({ days: 1 });
+
   const transactionInfo = await transactionsStrategies[strategy](bankDetails, {
-    startDate: '2020-04-10',
-    endDate: '2020-04-20',
+    startDate: yesterday.toFormat('yyyy-MM-dd'),
+    endDate: now.toFormat('yyyy-MM-dd'),
   });
 
   return transactionInfo.map((transaction) => ({
@@ -93,7 +96,7 @@ const insertTransaction = async (transactionInfo) => {
       ...transactionInfo,
     });
   } catch (error) {
-    logger.error('Duplicate id:', transactionInfo.externalId);
+    logger.error(`Duplicate id: ${transactionInfo.externalId}`);
   }
 };
 
@@ -105,14 +108,14 @@ const processCard = async (card) => {
       transaction,
     ));
 
-    await Promise.all(promises).then(() => logger.info('==== Finished processing card id:', card.id));
+    await Promise.all(promises).then(() => logger.info(`==== Finished processing card id: ${card.id}`));
     return true;
   } catch (error) {
     return false;
   }
 };
 
-const test = async () => {
+const checkTransactions = async () => {
   const cards = await CardRepository.findAll();
   const fullInfoCards = await joinBankAndAuth(cards);
 
@@ -123,4 +126,4 @@ const test = async () => {
     .then(() => logger.info('Finished inserting transactions'));
 };
 
-test();
+module.exports = checkTransactions;
