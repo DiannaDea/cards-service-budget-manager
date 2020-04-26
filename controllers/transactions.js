@@ -35,15 +35,21 @@ const processTransactions = async (cardIds, date) => {
 
 const TransactionsController = {
   getAll: async (ctx) => {
-    const { groupIds, date } = ctx.request.query;
+    const {
+      groupIds, cardIds, bankIds, date,
+    } = ctx.request.query;
 
-    const groupCards = await CardRepository.findAll({
-      groupId: groupIds.split(','),
-    }, ['id']);
+    const cards = await CardRepository
+      .findAll({
+        groupId: groupIds.split(','),
+        ...(bankIds && { bankId: bankIds.split(',') }),
+      }, ['id'])
+      .reduce((ids, card) => [...ids, card.id], []);
 
-    const cardIds = groupCards.reduce((ids, card) => [...ids, card.id], []);
-
-    const transactions = await processTransactions(cardIds, date);
+    const transactions = await processTransactions(
+      (!cardIds) ? cards : cardIds.split(','),
+      date,
+    );
     return ctx.send(200, transactions);
   },
   getFilters: (ctx) => ctx.send(200, 'getFilters'),

@@ -26,10 +26,8 @@ transactionsRouter.route({
     query: {
       groupIds: Joi.string().required(),
       date: Joi.string().required(),
-      categoryId: Joi.number(),
-      groupId: Joi.number(),
-      bankId: Joi.number(),
-      cardId: Joi.number(),
+      cardIds: Joi.string(),
+      bankIds: Joi.string(),
     },
   },
   handler: [TransactionsController.getAll],
