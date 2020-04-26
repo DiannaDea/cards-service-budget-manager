@@ -29,6 +29,18 @@ cardsRouter.route({
 
 cardsRouter.route({
   method: 'post',
+  path: '/custom',
+  validate: {
+    type: 'json',
+    body: {
+      groupId: Joi.string().required(),
+    },
+  },
+  handler: [CardsController.createCustom],
+});
+
+cardsRouter.route({
+  method: 'post',
   path: '/',
   validate: {
     type: 'json',

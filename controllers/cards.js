@@ -106,6 +106,19 @@ const CardsController = {
       return ctx.send(500, { error: error.message });
     }
   },
+  createCustom: async (ctx) => {
+    const { groupId } = ctx.request.body;
+
+    const customBank = await BankRepository.findOne({ internalName: 'custom' });
+
+    const card = await CardRepository.create({
+      owner: 1,
+      groupId,
+      bankId: customBank.id,
+    });
+
+    return ctx.send(200, card);
+  },
   create: async (ctx) => {
     const {
       groupId, bankId, authId, cardNumber,
