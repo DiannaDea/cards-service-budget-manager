@@ -26,23 +26,18 @@ module.exports = {
     },
     cardNumber: {
       type: Sequelize.STRING,
-      allowNull: false,
     },
     owner: {
       type: Sequelize.INTEGER,
-      allowNull: false,
     },
     currency: {
       type: Sequelize.STRING,
-      allowNull: false,
     },
     balance: {
       type: Sequelize.FLOAT,
-      allowNull: false,
     },
     limit: {
       type: Sequelize.FLOAT,
-      allowNull: false,
     },
     clientName: {
       type: Sequelize.STRING,

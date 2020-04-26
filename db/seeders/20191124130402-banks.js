@@ -1,4 +1,4 @@
-const bankNames = ['Monobank', 'PrivatBank'];
+const bankNames = ['Monobank', 'PrivatBank', 'Custom'];
 
 module.exports = {
   up: async (queryInterface) => {
