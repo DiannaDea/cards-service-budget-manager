@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Card.associate = (models) => {
     Card.belongsTo(models.Bank, { as: 'bank' });
+    Card.belongsTo(models.CardAuth, { as: 'cardAuth' });
   };
 
   return Card;

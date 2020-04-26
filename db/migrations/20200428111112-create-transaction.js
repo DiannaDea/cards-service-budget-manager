@@ -3,13 +3,19 @@ module.exports = {
     id: {
       allowNull: false,
       autoIncrement: true,
-      primaryKey: true,
       type: Sequelize.INTEGER,
     },
     externalId: {
       allowNull: false,
       primaryKey: true,
       type: Sequelize.STRING,
+    },
+    cardId: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'Cards',
+        key: 'id',
+      },
     },
     date: {
       type: Sequelize.DATE,

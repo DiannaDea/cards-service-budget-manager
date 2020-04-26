@@ -15,6 +15,7 @@ const CardAuthController = {
     }
   },
   findOne: (conditions) => CardAuth.findOne({ where: conditions }),
+  findAll: (conditions) => CardAuth.findAll({ where: conditions }),
   delete: async (id) => {
     try {
       const cardAuth = await CardAuthController.findOne({ id });
