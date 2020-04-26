@@ -18,7 +18,10 @@ const CardRepository = {
     }
   },
   findOne: (conditions) => Card.findOne({ where: conditions }),
-  findAll: (conditions) => Card.findAll({ where: conditions }),
+  findAll: (conditions, attributes = []) => Card.findAll({
+    where: conditions,
+    ...((attributes.length) ? { attributes } : {}),
+  }),
   update: async (id, info) => {
     try {
       await Card.update(info, { where: { id } });

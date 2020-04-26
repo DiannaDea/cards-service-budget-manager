@@ -1,4 +1,4 @@
-const { Transaction } = require('../db/models');
+const { Transaction, Sequelize } = require('../db/models');
 
 const TransactionRepository = {
   create: async (transactionInfo) => {
@@ -14,6 +14,17 @@ const TransactionRepository = {
       return null;
     }
   },
+  findAllInDateRange: (conditions, date) => Transaction.findAll({
+    where: {
+      ...conditions,
+      date: {
+        [Sequelize.Op.gte]: date,
+      },
+    },
+    order: [
+      ['date', 'DESC'],
+    ],
+  }),
   findAll: (conditions) => Transaction.findAll({ where: conditions }),
   deleteMany: async (conditions) => {
     try {

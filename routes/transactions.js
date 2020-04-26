@@ -23,9 +23,9 @@ transactionsRouter.route({
   method: 'get',
   path: '/',
   validate: {
-    type: 'json',
     query: {
-      userId: Joi.number().required(),
+      groupIds: Joi.string().required(),
+      date: Joi.string().required(),
       categoryId: Joi.number(),
       groupId: Joi.number(),
       bankId: Joi.number(),

@@ -9,5 +9,9 @@ module.exports = (sequelize, DataTypes) => {
     currency: DataTypes.STRING,
   }, {});
 
+  Transaction.associate = (models) => {
+    Transaction.belongsTo(models.Card, { as: 'card' });
+  };
+
   return Transaction;
 };
