@@ -10,5 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     clientName: DataTypes.STRING,
   }, {});
 
+  Card.associate = (models) => {
+    Card.belongsTo(models.Bank, { as: 'bank' });
+  };
+
   return Card;
 };

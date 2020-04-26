@@ -23,9 +23,8 @@ banksRouter.route({
   method: 'get',
   path: '/',
   validate: {
-    type: 'json',
     query: {
-      userId: Joi.number().required(),
+      groupIds: Joi.string().required(),
     },
   },
   handler: [BanksController.getAll],

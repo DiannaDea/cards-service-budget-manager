@@ -18,6 +18,7 @@ const CardRepository = {
     }
   },
   findOne: (conditions) => Card.findOne({ where: conditions }),
+  findAll: (conditions) => Card.findAll({ where: conditions }),
   update: async (id, info) => {
     try {
       await Card.update(info, { where: { id } });
