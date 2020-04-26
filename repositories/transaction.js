@@ -34,6 +34,24 @@ const TransactionRepository = {
       return false;
     }
   },
+  findOne: (conditions) => Transaction.findOne({ where: conditions }),
+  delete: async (id) => {
+    try {
+      const transaction = await TransactionRepository.findOne({ id });
+      await transaction.destroy();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
+  update: async (id, info) => {
+    try {
+      await Transaction.update(info, { where: { id } });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
 };
 
 module.exports = TransactionRepository;

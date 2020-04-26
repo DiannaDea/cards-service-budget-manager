@@ -92,9 +92,57 @@ const TransactionsController = {
 
     return ctx.send(200, transaction);
   },
-  update: (ctx) => ctx.send(200, 'update'),
-  getOne: (ctx) => ctx.send(200, 'getOne'),
-  delete: (ctx) => ctx.send(200, 'delete'),
+  checkIfExists: async (ctx, next) => {
+    const { id } = ctx.params;
+
+    const transaction = await TransactionRepository.findOne({ id });
+
+    if (!transaction) {
+      return ctx.send(404, `No transaction with id: ${id}`);
+    }
+    ctx.transaction = transaction;
+    return next();
+  },
+  update: async (ctx) => {
+    const { id } = ctx.params;
+    const { transaction } = ctx;
+
+    const initialTransactionCard = await transaction.getCard();
+
+    const { groupId } = ctx.request.body;
+
+    if (groupId) {
+      const card = await CardRepository.findOne({
+        groupId,
+        owner: initialTransactionCard.owner,
+      });
+
+      if (card) {
+        Object.assign(ctx.request.body, {
+          cardId: card.id,
+        });
+      }
+    }
+
+    const isUpdated = await TransactionRepository.update(id, ctx.request.body);
+
+    return (isUpdated)
+      ? ctx.send(200, { success: true })
+      : ctx.send(500, { success: false, error: `Unable to update transaction with id: ${id}` });
+  },
+  getOne: async (ctx) => {
+    const { transaction } = ctx;
+    await joinBank([transaction]);
+    return ctx.send(200, transaction);
+  },
+  delete: async (ctx) => {
+    const { id } = ctx.params;
+    const isDeleted = await TransactionRepository.delete(id);
+
+    return (isDeleted)
+      ? ctx.send(200, { success: true })
+      : ctx.send(500, { success: false, error: `Unable to delete transaction with id: ${id}` });
+  },
 };
 
 module.exports = TransactionsController;

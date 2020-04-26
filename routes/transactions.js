@@ -56,39 +56,35 @@ transactionsRouter.route({
       id: Joi.number().required(),
     },
     body: {
-      groupId: Joi.number().required(),
-      categoryId: Joi.number(),
-      type: Joi.string().valid(['expence', 'income']).required(),
+      groupId: Joi.string().required(),
+      operationAmount: Joi.number().required(),
       description: Joi.string(),
       currency: Joi.string().required(),
-      amount: Joi.number().required(),
     },
   },
-  handler: [TransactionsController.update],
+  handler: [TransactionsController.checkIfExists, TransactionsController.update],
 });
 
 transactionsRouter.route({
   method: 'get',
   path: '/:id',
   validate: {
-    type: 'json',
     params: {
       id: Joi.number().required(),
     },
   },
-  handler: [TransactionsController.getOne],
+  handler: [TransactionsController.checkIfExists, TransactionsController.getOne],
 });
 
 transactionsRouter.route({
   method: 'delete',
   path: '/:id',
   validate: {
-    type: 'json',
     params: {
       id: Joi.number().required(),
     },
   },
-  handler: [TransactionsController.delete],
+  handler: [TransactionsController.checkIfExists, TransactionsController.delete],
 });
 
 module.exports = transactionsRouter;
