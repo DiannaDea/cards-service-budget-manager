@@ -1,0 +1,45 @@
+module.exports = {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Transactions', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: Sequelize.INTEGER,
+    },
+    externalId: {
+      allowNull: false,
+      primaryKey: true,
+      type: Sequelize.STRING,
+    },
+    date: {
+      type: Sequelize.DATE,
+      allowNull: false,
+    },
+    operationAmount: {
+      type: Sequelize.FLOAT,
+      allowNull: false,
+    },
+    balance: {
+      type: Sequelize.FLOAT,
+      allowNull: false,
+    },
+    description: {
+      type: Sequelize.STRING,
+    },
+    currency: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
+    },
+  }),
+  down: (queryInterface) => queryInterface.dropTable('Transactions'),
+};
