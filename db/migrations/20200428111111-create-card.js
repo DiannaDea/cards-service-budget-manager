@@ -28,6 +28,10 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    owner: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
     currency: {
       type: Sequelize.STRING,
       allowNull: false,

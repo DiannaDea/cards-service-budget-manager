@@ -128,6 +128,7 @@ const CardsController = {
       const balance = await balanceStrategies[strategy](bankDetails);
 
       const card = await CardRepository.create({
+        owner: 0,
         groupId,
         bankId,
         cardAuthId: authId,
