@@ -51,7 +51,7 @@ cardsRouter.route({
       id: Joi.number().required(),
     },
     body: {
-      groupId: Joi.number().required(),
+      groupId: Joi.string().required(),
     },
   },
   handler: [CardsController.update],
@@ -61,7 +61,6 @@ cardsRouter.route({
   method: 'delete',
   path: '/:id',
   validate: {
-    type: 'json',
     params: {
       id: Joi.number().required(),
     },

@@ -81,57 +81,105 @@ const CardsController = {
 
     const cardAuthDetails = cardAuthStrategies[strategy](bankDetails);
 
-    if (await CardAuthRepository.findOne(cardAuthDetails)) {
-      return ctx.send(200, 'Bank already authed');
+    try {
+      if (await CardAuthRepository.findOne(cardAuthDetails)) {
+        return ctx.send(200, 'Bank already authed');
+      }
+
+      const bank = await BankRepository.findOne({ internalName: strategy });
+
+      const balance = await balanceStrategies[strategy](bankDetails);
+      if (!balance) {
+        return ctx.send(401, { authId: null, success: false, message: 'Invalid card' });
+      }
+
+      // TODO: hash before savings
+      const cardAuth = await CardAuthRepository.create(cardAuthDetails);
+
+      return ctx.send(200, {
+        cardNumber: bankDetails.cardNumber,
+        bankId: bank.id,
+        authId: cardAuth.id,
+        success: true,
+      });
+    } catch (error) {
+      return ctx.send(500, { error: error.message });
     }
-
-    const bank = await BankRepository.findOne({ internalName: strategy });
-
-    const balance = await balanceStrategies[strategy](bankDetails);
-    if (!balance) {
-      return ctx.send(401, { authId: null, success: false, message: 'Invalid card' });
-    }
-
-    const cardAuth = await CardAuthRepository.create(cardAuthDetails);
-
-    return ctx.send(200, {
-      cardNumber: bankDetails.cardNumber,
-      bankId: bank.id,
-      authId: cardAuth.id,
-      success: true,
-    });
   },
   create: async (ctx) => {
     const {
       groupId, bankId, authId, cardNumber,
     } = ctx.request.body;
 
-    const cardAuth = await CardAuthRepository.findOne({ id: authId });
-    if (!cardAuth) {
-      return ctx.send(404, 'Bank not authed');
+    try {
+      const cardAuth = await CardAuthRepository.findOne({ id: authId });
+      if (!cardAuth) {
+        return ctx.send(404, 'Bank not authed');
+      }
+
+      const bank = await BankRepository.findOne({ id: bankId });
+      if (!bank) {
+        return ctx.send(404, 'Bank not authed');
+      }
+
+      const strategy = bank.internalName;
+
+      const bankDetails = cardAuthConverter[strategy](cardAuth, cardNumber);
+      const balance = await balanceStrategies[strategy](bankDetails);
+
+      const card = await CardRepository.create({
+        groupId,
+        bankId,
+        cardAuthId: authId,
+        ...balance,
+      });
+
+      return ctx.send(200, card);
+    } catch (error) {
+      return ctx.send(500, { error: error.message });
     }
-
-    const bank = await BankRepository.findOne({ id: bankId });
-    if (!bank) {
-      return ctx.send(404, 'Bank not authed');
-    }
-
-    const strategy = bank.internalName;
-
-    const bankDetails = cardAuthConverter[strategy](cardAuth, cardNumber);
-    const balance = await balanceStrategies[strategy](bankDetails);
-
-    const card = await CardRepository.create({
-      groupId,
-      bankId,
-      cardAuthId: authId,
-      ...balance,
-    });
-
-    return ctx.send(200, card);
   },
-  update: (ctx) => ctx.send(200, 'update'),
-  delete: (ctx) => ctx.send(200, 'delete'),
+  update: async (ctx) => {
+    const { id } = ctx.params;
+
+    // TODO: check if group exists
+    // const { groupId } = ctx.request.body;
+
+    try {
+      const card = await CardRepository.findOne({ id });
+
+      if (!card) {
+        return ctx.send(404, `No card with such id: ${id}`);
+      }
+
+      const isUpdated = await CardRepository.update(id, ctx.request.body);
+
+      return (isUpdated)
+        ? ctx.send(200, { success: true })
+        : ctx.send(500, { success: false, error: `Unable to update card with id: ${id}` });
+    } catch (error) {
+      return ctx.send(500, { error: error.message });
+    }
+  },
+  delete: async (ctx) => {
+    const { id } = ctx.params;
+
+    try {
+      const card = await CardRepository.findOne({ id });
+
+      if (!card) {
+        return ctx.send(404, `No card with such id: ${id}`);
+      }
+
+      const isDeleted = await CardRepository.delete(id);
+
+      return (isDeleted)
+        ? ctx.send(200, { success: true })
+        : ctx.send(500, { success: false, error: `Unable to delete card with id: ${id}` });
+    } catch (error) {
+      return ctx.send(500, { error: error.message });
+    }
+  },
 };
 
 module.exports = CardsController;
