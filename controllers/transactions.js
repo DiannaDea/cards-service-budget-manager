@@ -12,7 +12,6 @@ const joinBank = (transactions) => {
     const transaction = transactionInfo.get({ plain: true });
 
     Object.assign(transaction, { card, bank });
-
     return transaction;
   });
 
@@ -31,6 +30,16 @@ const processTransactions = async (cardIds, date) => {
     .toFormat('dd.MM.yyyy'));
 
   return grouped;
+};
+
+const getFilters = async (cards) => {
+  const banksPromises = cards.map((card) => card.getBank());
+  const banks = await Promise.all(banksPromises);
+
+  return {
+    banks,
+    cards,
+  };
 };
 
 const TransactionsController = {
@@ -52,7 +61,15 @@ const TransactionsController = {
     );
     return ctx.send(200, transactions);
   },
-  getFilters: (ctx) => ctx.send(200, 'getFilters'),
+  getFilters: async (ctx) => {
+    const { groupIds } = ctx.request.query;
+
+    const cards = await CardRepository
+      .findAll({ groupId: groupIds.split(',') });
+
+    const filters = await getFilters(cards);
+    return ctx.send(200, filters);
+  },
   create: (ctx) => ctx.send(200, 'create'),
   update: (ctx) => ctx.send(200, 'update'),
   getOne: (ctx) => ctx.send(200, 'getOne'),

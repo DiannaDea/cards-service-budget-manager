@@ -11,9 +11,8 @@ transactionsRouter.route({
   method: 'get',
   path: '/filters',
   validate: {
-    type: 'json',
     query: {
-      userId: Joi.number().required(),
+      groupIds: Joi.string().required(),
     },
   },
   handler: [TransactionsController.getFilters],
