@@ -1,5 +1,6 @@
 const { groupBy } = require('lodash');
 const { DateTime } = require('luxon');
+const { uuid } = require('uuidv4');
 
 const TransactionRepository = require('../repositories/transaction');
 const CardRepository = require('../repositories/card');
@@ -70,7 +71,27 @@ const TransactionsController = {
     const filters = await getFilters(cards);
     return ctx.send(200, filters);
   },
-  create: (ctx) => ctx.send(200, 'create'),
+  create: async (ctx) => {
+    const {
+      groupId, operationAmount, description, currency,
+    } = ctx.request.body;
+
+    const customCard = await CardRepository.findOne({
+      owner: 1,
+      groupId,
+    });
+
+    const transaction = await TransactionRepository.create({
+      cardId: customCard.id,
+      externalId: uuid(),
+      date: DateTime.local().toUTC().toISO(),
+      operationAmount,
+      description,
+      currency,
+    });
+
+    return ctx.send(200, transaction);
+  },
   update: (ctx) => ctx.send(200, 'update'),
   getOne: (ctx) => ctx.send(200, 'getOne'),
   delete: (ctx) => ctx.send(200, 'delete'),

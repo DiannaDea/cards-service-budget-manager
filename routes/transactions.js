@@ -38,12 +38,10 @@ transactionsRouter.route({
   validate: {
     type: 'json',
     body: {
-      groupId: Joi.number().required(),
-      categoryId: Joi.number(),
-      type: Joi.string().valid(['expence', 'income']).required(),
+      groupId: Joi.string().required(),
+      operationAmount: Joi.number().required(),
       description: Joi.string(),
       currency: Joi.string().required(),
-      amount: Joi.number().required(),
     },
   },
   handler: [TransactionsController.create],

@@ -27,7 +27,6 @@ module.exports = {
     },
     balance: {
       type: Sequelize.FLOAT,
-      allowNull: false,
     },
     description: {
       type: Sequelize.STRING,
