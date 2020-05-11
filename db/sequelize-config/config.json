@@ -6,6 +6,13 @@
     "host": "db",
     "dialect": "postgres"
   },
+  "migrations": {
+    "username": "root",
+    "password": "password123",
+    "database": "cards-service",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
   "test": {
     "username": "root",
     "password": "password123",
