@@ -3,6 +3,8 @@ const { DateTime } = require('luxon');
 
 const logger = require('../logger');
 
+const { decrypt } = require('../encryptor');
+
 const requestMonobank = require('../monobank');
 const requestPrivatBank = require('../privatbank');
 
@@ -11,11 +13,11 @@ const TransactionRepository = require('../../repositories/transaction');
 
 const cardAuthConverter = {
   monobank: (card) => ({
-    token: card.auth.monobankToken,
+    token: decrypt(card.auth.monobankToken),
   }),
   privatbank: (card) => ({
-    merchantId: card.auth.privatMerchantId,
-    password: card.auth.privatMerchantSignature,
+    merchantId: decrypt(card.auth.privatMerchantId),
+    password: decrypt(card.auth.privatMerchantSignature),
     cardNumber: card.cardNumber,
   }),
 };

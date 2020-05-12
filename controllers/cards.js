@@ -9,12 +9,12 @@ const CardRepository = require('../repositories/card');
 
 const cardAuthConverter = {
   monobank: (cardAuth, cardNumber) => ({
-    token: cardAuth.monobankToken,
+    token: decrypt(cardAuth.monobankToken),
     cardNumber,
   }),
   privatbank: (cardAuth, cardNumber) => ({
-    merchantId: cardAuth.privatMerchantId,
-    password: cardAuth.privatMerchantSignature,
+    merchantId: decrypt(cardAuth.privatMerchantId),
+    password: decrypt(cardAuth.privatMerchantSignature),
     cardNumber,
   }),
 };
@@ -62,12 +62,12 @@ const getBalanceStrategy = (requestBody) => {
 };
 
 const cardAuthStrategies = {
-  monobank: ({ token }, isEncrypted) => ({
-    monobankToken: isEncrypted ? decrypt(token) : encrypt(token),
+  monobank: ({ token }) => ({
+    monobankToken: encrypt(token),
   }),
-  privatbank: ({ merchantId, password }, isEncrypted) => ({
-    privatMerchantId: isEncrypted ? decrypt(merchantId) : encrypt(merchantId),
-    privatMerchantSignature: isEncrypted ? decrypt(password) : encrypt(password),
+  privatbank: ({ merchantId, password }) => ({
+    privatMerchantId: encrypt(merchantId),
+    privatMerchantSignature: encrypt(password),
   }),
 };
 
@@ -81,7 +81,7 @@ const CardsController = {
       return ctx.send(404, 'Bank is not supported');
     }
 
-    const cardAuthDetails = cardAuthStrategies[strategy](bankDetails, false);
+    const cardAuthDetails = cardAuthStrategies[strategy](bankDetails);
 
     try {
       if (await CardAuthRepository.findOne(cardAuthDetails)) {
