@@ -36,7 +36,12 @@ const requestPrivatBank = (url, requestInfo) => {
 
   return requester(options).then((res) => {
     const convered = PrivatBankApi.convertBodyToJson(res);
-    return config.converter(JSON.parse(convered));
+    const data = config.converter(JSON.parse(convered));
+
+    if (Object.values(data).every(Boolean)) {
+      return data;
+    }
+    return null;
   });
 };
 
