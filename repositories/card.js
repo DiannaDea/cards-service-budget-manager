@@ -1,7 +1,7 @@
 const { Card, sequelize } = require('../db/models');
 
 const CardAuthController = require('./card-auth');
-// const TransactionRepository = require('./transaction');
+const TransactionRepository = require('./transaction');
 
 const CardRepository = {
   create: async (cardAuthInfo) => {
@@ -33,6 +33,12 @@ const CardRepository = {
   delete: (id) => sequelize.transaction(async () => {
     const card = await Card.findOne({ where: { id } });
 
+    const areTransactionsDeleted = await TransactionRepository.deleteMany({ cardId: card.id });
+
+    if (!areTransactionsDeleted) {
+      return false;
+    }
+
     try {
       await card.destroy();
     } catch (error) {
@@ -40,15 +46,7 @@ const CardRepository = {
     }
 
     const isCardAuthDeleted = await CardAuthController.delete(card.cardAuthId);
-
-    if (!isCardAuthDeleted) {
-      return false;
-    }
-
-    return true;
-
-    // TODO: delete transactions
-    // const areTransactionsDeleted = await TransactionRepository.deleteMany({})
+    return isCardAuthDeleted;
   }),
 };
 
