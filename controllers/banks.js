@@ -1,5 +1,6 @@
 const { get } = require('lodash');
 const CardRepository = require('../repositories/card');
+const groups = require('../groups');
 
 const joinBanks = (cards) => {
   const promises = cards.map(async (card) => {
@@ -9,10 +10,8 @@ const joinBanks = (cards) => {
     return {
       ...cardInfo,
       bank,
-      group: {
-        id: '1',
-        name: 'Family',
-      },
+      // TODO: request group from API
+      group: groups[card.groupId],
     };
   });
 

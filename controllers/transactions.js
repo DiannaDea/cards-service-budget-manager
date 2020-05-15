@@ -6,6 +6,8 @@ const TransactionRepository = require('../repositories/transaction');
 const CardRepository = require('../repositories/card');
 const CategoryRepository = require('../repositories/category');
 
+const groups = require('../groups');
+
 const joinBank = (transactions) => {
   const promises = transactions.map(async (transactionInfo) => {
     const card = await transactionInfo.getCard();
@@ -16,7 +18,7 @@ const joinBank = (transactions) => {
 
     // TODO: request group (card.groupId)
     Object.assign(transaction, {
-      card, bank, category, group: { id: '1', name: 'Family' },
+      card, bank, category, group: groups[card.groupId],
     });
 
     return transaction;
