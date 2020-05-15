@@ -39,12 +39,19 @@ const getFilters = async (cards) => {
   const banks = await Promise.all(banksPromises);
 
   const cardIds = cards.map((card) => card.id);
+
+  const [minDate] = await TransactionRepository.getDate(cardIds, 'min');
+  const [maxDate] = await TransactionRepository.getDate(cardIds, 'max');
   const categories = await CategoryRepository.getDistinct(cardIds);
 
   return {
     banks,
     cards,
     categories,
+    dates: {
+      min: minDate.date,
+      max: maxDate.date,
+    },
   };
 };
 

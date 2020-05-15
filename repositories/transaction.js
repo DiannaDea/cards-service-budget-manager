@@ -52,6 +52,16 @@ const TransactionRepository = {
       return false;
     }
   },
+  getDate(cardIds, type) {
+    return Transaction.findAll({
+      attributes: [[Sequelize.fn(type, Sequelize.col('date')), 'date']],
+      where: {
+        cardId: {
+          [Sequelize.Op.in]: cardIds,
+        },
+      },
+    });
+  },
 };
 
 module.exports = TransactionRepository;
