@@ -147,6 +147,7 @@ const CardsController = {
         bankId,
         cardAuthId: authId,
         ...balance,
+        cardNumber,
       });
 
       return ctx.send(200, card);
