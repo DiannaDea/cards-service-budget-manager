@@ -11,19 +11,18 @@ const joinBank = (transactions) => {
     const card = await transactionInfo.getCard();
     const bank = await card.getBank();
 
+    const category = await transactionInfo.getCategory();
     const transaction = transactionInfo.get({ plain: true });
 
-    Object.assign(transaction, { card, bank });
+    Object.assign(transaction, { card, bank, category });
     return transaction;
   });
 
   return Promise.all(promises);
 };
 
-const processTransactions = async (cardIds, date) => {
-  const transactions = await TransactionRepository.findAllInDateRange({
-    cardId: cardIds,
-  }, date);
+const processTransactions = async (filters) => {
+  const transactions = await TransactionRepository.findAllInDateRange(filters);
 
   await joinBank(transactions);
 
@@ -58,7 +57,7 @@ const getFilters = async (cards) => {
 const TransactionsController = {
   getAll: async (ctx) => {
     const {
-      groupIds, cardIds, bankIds, date,
+      groupIds, cardIds, bankIds, categoryIds, dateStart, dateEnd,
     } = ctx.request.query;
 
     const cards = await CardRepository
@@ -68,10 +67,14 @@ const TransactionsController = {
       }, ['id'])
       .reduce((ids, card) => [...ids, card.id], []);
 
-    const transactions = await processTransactions(
-      (!cardIds) ? cards : cardIds.split(','),
-      date,
-    );
+    const filters = {
+      cardId: (!cardIds) ? cards : cardIds.split(',').map((e) => parseInt(e, 10)),
+      ...(categoryIds && { categoryId: categoryIds.split(',').map((e) => parseInt(e, 10)) }),
+      ...(dateStart && { dateStart }),
+      ...(dateEnd && { dateEnd }),
+    };
+
+    const transactions = await processTransactions(filters);
     return ctx.send(200, transactions);
   },
   getFilters: async (ctx) => {

@@ -24,9 +24,11 @@ transactionsRouter.route({
   validate: {
     query: {
       groupIds: Joi.string().required(),
-      date: Joi.string().required(),
+      dateStart: Joi.string(),
+      dateEnd: Joi.string(),
       cardIds: Joi.string(),
       bankIds: Joi.string(),
+      categoryIds: Joi.string(),
     },
   },
   handler: [TransactionsController.getAll],

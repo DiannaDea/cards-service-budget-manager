@@ -14,17 +14,24 @@ const TransactionRepository = {
       return null;
     }
   },
-  findAllInDateRange: (conditions, date) => Transaction.findAll({
-    where: {
-      ...conditions,
-      date: {
-        [Sequelize.Op.gte]: date,
+  findAllInDateRange: async ({ dateStart, dateEnd, ...conditions }) => {
+    const date = (dateStart || dateEnd)
+      ? {
+        ...(dateStart && { [Sequelize.Op.gte]: dateStart }),
+        ...(dateEnd && { [Sequelize.Op.lte]: dateEnd }),
+      }
+      : null;
+
+    return Transaction.findAll({
+      where: {
+        ...conditions,
+        ...(date && { date }),
       },
-    },
-    order: [
-      ['date', 'DESC'],
-    ],
-  }),
+      order: [
+        ['date', 'DESC'],
+      ],
+    });
+  },
   findAll: (conditions) => Transaction.findAll({ where: conditions }),
   deleteMany: async (conditions) => {
     try {
