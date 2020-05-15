@@ -9,6 +9,10 @@ const joinBanks = (cards) => {
     return {
       ...cardInfo,
       bank,
+      group: {
+        id: '1',
+        name: 'Family',
+      },
     };
   });
 
