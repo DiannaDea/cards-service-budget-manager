@@ -47,7 +47,23 @@ const BanksController = {
     return ctx.send(200, Object.values(groupedByBanks));
   },
   getCards: (ctx) => ctx.send(200, 'getCards'),
-  delete: (ctx) => ctx.send(200, 'delete'),
+  delete: async (ctx) => {
+    const { id } = ctx.params;
+
+    try {
+      const cards = await CardRepository.findAll({ bankId: id });
+      const promises = cards.map((bankCard) => CardRepository.delete(bankCard.id));
+      const deleteResult = await Promise.all(promises);
+
+      const isDeleted = deleteResult.every(Boolean);
+
+      return (isDeleted)
+        ? ctx.send(200, { success: true })
+        : ctx.send(500, { success: false, error: `Unable to delete bank with id: ${id}` });
+    } catch (error) {
+      return ctx.send(500, { error: error.message });
+    }
+  },
 };
 
 module.exports = BanksController;

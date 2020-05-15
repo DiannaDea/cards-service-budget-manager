@@ -34,8 +34,7 @@ banksRouter.route({
   method: 'delete',
   path: '/:id',
   validate: {
-    type: 'json',
-    query: {
+    params: {
       id: Joi.number().required(),
     },
   },
