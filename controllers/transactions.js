@@ -4,6 +4,7 @@ const { uuid } = require('uuidv4');
 
 const TransactionRepository = require('../repositories/transaction');
 const CardRepository = require('../repositories/card');
+const CategoryRepository = require('../repositories/category');
 
 const joinBank = (transactions) => {
   const promises = transactions.map(async (transactionInfo) => {
@@ -37,9 +38,13 @@ const getFilters = async (cards) => {
   const banksPromises = cards.map((card) => card.getBank());
   const banks = await Promise.all(banksPromises);
 
+  const cardIds = cards.map((card) => card.id);
+  const categories = await CategoryRepository.getDistinct(cardIds);
+
   return {
     banks,
     cards,
+    categories,
   };
 };
 

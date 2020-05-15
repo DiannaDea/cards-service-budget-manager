@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Transaction.associate = (models) => {
     Transaction.belongsTo(models.Card, { as: 'card' });
+    Transaction.belongsTo(models.Category, { as: 'category' });
   };
 
   return Transaction;
