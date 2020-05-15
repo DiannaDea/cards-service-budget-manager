@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { get } = require('lodash');
 const { DateTime } = require('luxon');
 
@@ -92,10 +93,18 @@ const getCardTransactions = async (card) => {
   }));
 };
 
+const getRandomInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+};
+
 const insertTransaction = async (transactionInfo) => {
   try {
     await TransactionRepository.create({
       ...transactionInfo,
+      // TODO: fix !!!
+      categoryId: getRandomInt(1, 9),
     });
   } catch (error) {
     logger.error(`Duplicate id: ${transactionInfo.externalId}`);
