@@ -14,7 +14,11 @@ const joinBank = (transactions) => {
     const category = await transactionInfo.getCategory();
     const transaction = transactionInfo.get({ plain: true });
 
-    Object.assign(transaction, { card, bank, category });
+    // TODO: request group (card.groupId)
+    Object.assign(transaction, {
+      card, bank, category, group: { id: '1', name: 'Family' },
+    });
+
     return transaction;
   });
 
