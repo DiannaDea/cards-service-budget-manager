@@ -2,23 +2,22 @@ module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Cards', {
     id: {
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
     },
     groupId: {
       type: Sequelize.STRING,
       allowNull: false,
     },
     bankId: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
       references: {
         model: 'Banks',
         key: 'id',
       },
     },
     cardAuthId: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
       references: {
         model: 'CardAuths',
         key: 'id',

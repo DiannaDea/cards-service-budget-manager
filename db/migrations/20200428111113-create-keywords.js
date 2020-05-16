@@ -2,16 +2,15 @@ module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Keywords', {
     id: {
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
     },
     name: {
       type: Sequelize.STRING,
       allowNull: false,
     },
     categoryId: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
       references: {
         model: 'Categories',
         key: 'id',

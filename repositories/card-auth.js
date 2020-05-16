@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const { CardAuth } = require('../db/models');
 
 const CardAuthController = {
@@ -6,6 +7,7 @@ const CardAuthController = {
       return CardAuth
         .build({
           ...cardAuthInfo,
+          id: uuidv4(),
           createdAt: new Date(),
           updatedAd: new Date(),
         })

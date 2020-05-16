@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid');
+
 const categoryNames = [
   'Food', 'Sport', 'Transport', 'Beauty', 'Health', 'Purchase', 'Transfer', 'Other',
 ];
@@ -5,6 +7,7 @@ const categoryNames = [
 module.exports = {
   up: async (queryInterface) => {
     const categories = await Promise.all(categoryNames.map((category) => ({
+      id: uuidv4(),
       name: category,
       internalName: category.toLocaleLowerCase(),
       createdAt: new Date(),

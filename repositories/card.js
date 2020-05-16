@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const { Card, sequelize } = require('../db/models');
 
 const CardAuthController = require('./card-auth');
@@ -9,6 +10,7 @@ const CardRepository = {
       return Card
         .build({
           ...cardAuthInfo,
+          id: uuidv4(),
           createdAt: new Date(),
           updatedAd: new Date(),
         })

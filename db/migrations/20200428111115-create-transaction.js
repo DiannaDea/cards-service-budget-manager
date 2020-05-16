@@ -2,8 +2,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Transactions', {
     id: {
       allowNull: false,
-      autoIncrement: true,
-      type: Sequelize.INTEGER,
+      primaryKey: true,
+      type: Sequelize.UUID,
     },
     externalId: {
       allowNull: false,
@@ -11,14 +11,14 @@ module.exports = {
       type: Sequelize.STRING,
     },
     cardId: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
       references: {
         model: 'Cards',
         key: 'id',
       },
     },
     categoryId: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
       references: {
         model: 'Categories',
         key: 'id',

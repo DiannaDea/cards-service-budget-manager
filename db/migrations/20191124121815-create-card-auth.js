@@ -2,9 +2,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('CardAuths', {
     id: {
       allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
     },
     monobankToken: {
       type: Sequelize.STRING,

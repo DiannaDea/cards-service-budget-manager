@@ -33,7 +33,7 @@ cardsRouter.route({
   validate: {
     type: 'json',
     body: {
-      groupId: Joi.string().required(),
+      groupId: Joi.string().guid({ version: 'uuidv4' }).required(),
     },
   },
   handler: [CardsController.createCustom],
@@ -46,9 +46,9 @@ cardsRouter.route({
     type: 'json',
     body: {
       cardNumber: Joi.string().required(),
-      groupId: Joi.string().required(),
-      bankId: Joi.number().required(),
-      authId: Joi.number().required(),
+      groupId: Joi.string().guid({ version: 'uuidv4' }).required(),
+      bankId: Joi.string().guid({ version: 'uuidv4' }).required(),
+      authId: Joi.string().guid({ version: 'uuidv4' }).required(),
     },
   },
   handler: [CardsController.create],
@@ -60,10 +60,10 @@ cardsRouter.route({
   validate: {
     type: 'json',
     params: {
-      id: Joi.number().required(),
+      id: Joi.string().guid({ version: 'uuidv4' }).required(),
     },
     body: {
-      groupId: Joi.string().required(),
+      groupId: Joi.string().guid({ version: 'uuidv4' }).required(),
     },
   },
   handler: [CardsController.update],
@@ -74,7 +74,7 @@ cardsRouter.route({
   path: '/:id',
   validate: {
     params: {
-      id: Joi.number().required(),
+      id: Joi.string().guid({ version: 'uuidv4' }).required(),
     },
   },
   handler: [CardsController.delete],

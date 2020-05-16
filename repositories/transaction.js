@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require('uuid');
 const { Transaction, Sequelize } = require('../db/models');
 
 const TransactionRepository = {
@@ -6,6 +7,7 @@ const TransactionRepository = {
       return Transaction
         .build({
           ...transactionInfo,
+          id: uuidv4(),
           createdAt: new Date(),
           updatedAd: new Date(),
         })
