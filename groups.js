@@ -1,14 +1,14 @@
 module.exports = {
   1: {
-    id: '1',
+    id: 'aa9db47c-9aaa-4f64-97a9-f1b5fe118b7b',
     name: 'Private',
   },
   2: {
-    id: '2',
+    id: 'fe69984c-7d35-41e0-925d-45270e7fae99',
     name: 'Family',
   },
   3: {
-    id: '3',
+    id: '9cdd2afd-7245-440e-9b85-4c4297d8f687',
     name: 'Business',
   },
 };
