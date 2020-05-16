@@ -74,8 +74,8 @@ const TransactionsController = {
       .reduce((ids, card) => [...ids, card.id], []);
 
     const filters = {
-      cardId: (!cardIds) ? cards : cardIds.split(',').map((e) => parseInt(e, 10)),
-      ...(categoryIds && { categoryId: categoryIds.split(',').map((e) => parseInt(e, 10)) }),
+      cardId: (!cardIds) ? cards : cardIds.split(','),
+      ...(categoryIds && { categoryId: categoryIds.split(',') }),
       ...(dateStart && { dateStart }),
       ...(dateEnd && { dateEnd }),
     };

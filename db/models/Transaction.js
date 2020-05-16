@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const Transaction = sequelize.define('Transaction', {
-    cardId: DataTypes.STRING,
+    cardId: DataTypes.UUID,
     externalId: DataTypes.STRING,
     date: DataTypes.DATE,
     operationAmount: DataTypes.FLOAT,
