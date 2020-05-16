@@ -11,6 +11,7 @@ const requestPrivatBank = require('../privatbank');
 
 const CardRepository = require('../../repositories/card');
 const TransactionRepository = require('../../repositories/transaction');
+const CategoryRepository = require('../../repositories/category');
 
 const cardAuthConverter = {
   monobank: (card) => ({
@@ -80,7 +81,7 @@ const getCardTransactions = async (card) => {
   const bankDetails = cardAuthConverter[strategy](card);
 
   const now = DateTime.local();
-  const yesterday = now.minus({ days: 1 });
+  const yesterday = now.minus({ days: 3 });
 
   const transactionInfo = await transactionsStrategies[strategy](bankDetails, {
     startDate: yesterday.toFormat('yyyy-MM-dd'),
@@ -93,18 +94,21 @@ const getCardTransactions = async (card) => {
   }));
 };
 
-const getRandomInt = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
+
+const getRandomInt = (categories) => {
+  const min = 0;
+  const max = categories.length;
+  const pos = Math.floor(Math.random() * (max - min)) + min;
+  return categories[pos].id;
 };
 
 const insertTransaction = async (transactionInfo) => {
   try {
+    const categories = await CategoryRepository.findAll();
     await TransactionRepository.create({
       ...transactionInfo,
       // TODO: fix !!!
-      categoryId: getRandomInt(1, 9),
+      categoryId: getRandomInt(categories),
     });
   } catch (error) {
     logger.error(`Duplicate id: ${transactionInfo.externalId}`);
