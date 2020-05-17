@@ -29,6 +29,8 @@ transactionsRouter.route({
       cardIds: Joi.string(),
       bankIds: Joi.string(),
       categoryIds: Joi.string(),
+      limit: Joi.string().required(),
+      page: Joi.string().required(),
     },
   },
   handler: [TransactionsController.getAll],

@@ -16,7 +16,7 @@ const TransactionRepository = {
       return null;
     }
   },
-  findAllInDateRange: async ({ dateStart, dateEnd, ...conditions }) => {
+  findAllInDateRange: async ({ dateStart, dateEnd, ...conditions }, pagination) => {
     const date = (dateStart || dateEnd)
       ? {
         ...(dateStart && { [Sequelize.Op.gte]: dateStart }),
@@ -24,7 +24,7 @@ const TransactionRepository = {
       }
       : null;
 
-    return Transaction.findAll({
+    return Transaction.findAndCountAll({
       where: {
         ...conditions,
         ...(date && { date }),
@@ -32,6 +32,7 @@ const TransactionRepository = {
       order: [
         ['date', 'DESC'],
       ],
+      ...pagination,
     });
   },
   findAll: (conditions) => Transaction.findAll({ where: conditions }),

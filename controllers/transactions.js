@@ -27,16 +27,22 @@ const joinBank = (transactions) => {
   return Promise.all(promises);
 };
 
-const processTransactions = async (filters) => {
-  const transactions = await TransactionRepository.findAllInDateRange(filters);
+const processTransactions = async (filters, pagination) => {
+  const transactions = await TransactionRepository.findAllInDateRange(
+    filters,
+    pagination,
+  );
 
-  await joinBank(transactions);
+  await joinBank(transactions.rows);
 
-  const grouped = groupBy(transactions, (transaction) => DateTime
+  const grouped = groupBy(transactions.rows, (transaction) => DateTime
     .fromISO(transaction.date.toISOString())
     .toFormat('dd.MM.yyyy'));
 
-  return grouped;
+  return {
+    rows: grouped,
+    count: transactions.count,
+  };
 };
 
 const getFilters = async (cards) => {
@@ -63,7 +69,7 @@ const getFilters = async (cards) => {
 const TransactionsController = {
   getAll: async (ctx) => {
     const {
-      groupIds, cardIds, bankIds, categoryIds, dateStart, dateEnd,
+      groupIds, cardIds, bankIds, categoryIds, dateStart, dateEnd, limit, page,
     } = ctx.request.query;
 
     const cards = await CardRepository
@@ -80,7 +86,12 @@ const TransactionsController = {
       ...(dateEnd && { dateEnd }),
     };
 
-    const transactions = await processTransactions(filters);
+    const pagination = {
+      offset: ((parseInt(page, 10) - 1) * parseInt(limit, 10)),
+      limit: parseInt(limit, 10),
+    };
+
+    const transactions = await processTransactions(filters, pagination);
     return ctx.send(200, transactions);
   },
   getFilters: async (ctx) => {
