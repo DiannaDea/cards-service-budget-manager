@@ -38,9 +38,14 @@ const requestPrivatBank = (url, requestInfo) => {
     const convered = PrivatBankApi.convertBodyToJson(res);
     const data = config.converter(JSON.parse(convered));
 
-    if (data.balance && data.cardNumber) {
+    if (Array.isArray(data)) {
       return data;
     }
+
+    if (data.balance) {
+      return data;
+    }
+
     return null;
   });
 };
