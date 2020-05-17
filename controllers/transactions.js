@@ -79,11 +79,16 @@ const TransactionsController = {
       }, ['id'])
       .reduce((ids, card) => [...ids, card.id], []);
 
+    const endDateFormatted = DateTime
+      .fromFormat(dateEnd, 'yyyy-MM-dd')
+      .plus({ days: 1 })
+      .toFormat('yyyy-MM-dd');
+
     const filters = {
       cardId: (!cardIds) ? cards : cardIds.split(','),
       ...(categoryIds && { categoryId: categoryIds.split(',') }),
       ...(dateStart && { dateStart }),
-      ...(dateEnd && { dateEnd }),
+      ...(dateEnd && { dateEnd: endDateFormatted }),
     };
 
     const pagination = {
