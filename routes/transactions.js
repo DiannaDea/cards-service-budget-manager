@@ -44,8 +44,9 @@ transactionsRouter.route({
     body: {
       groupId: Joi.string().guid({ version: 'uuidv4' }).required(),
       operationAmount: Joi.number().required(),
-      description: Joi.string(),
+      description: Joi.string().required(),
       currency: Joi.string().required(),
+      categoryId: Joi.string().guid({ version: 'uuidv4' }).required(),
     },
   },
   handler: [TransactionsController.create],
@@ -62,8 +63,9 @@ transactionsRouter.route({
     body: {
       groupId: Joi.string().guid({ version: 'uuidv4' }).required(),
       operationAmount: Joi.number().required(),
-      description: Joi.string(),
+      description: Joi.string().required(),
       currency: Joi.string().required(),
+      categoryId: Joi.string().guid({ version: 'uuidv4' }).required(),
     },
   },
   handler: [TransactionsController.checkIfExists, TransactionsController.update],

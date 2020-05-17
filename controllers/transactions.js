@@ -3,6 +3,7 @@ const { DateTime } = require('luxon');
 const { uuid } = require('uuidv4');
 
 const TransactionRepository = require('../repositories/transaction');
+const BanksRepository = require('../repositories/bank');
 const CardRepository = require('../repositories/card');
 const CategoryRepository = require('../repositories/category');
 
@@ -66,6 +67,15 @@ const getFilters = async (cards) => {
   };
 };
 
+const createCustomCard = async ({ groupId }) => {
+  const customBank = await BanksRepository.findOne({ internalName: 'custom' });
+  return CardRepository.create({
+    groupId,
+    bankId: customBank.id,
+    owner: 1,
+  });
+};
+
 const TransactionsController = {
   getAll: async (ctx) => {
     const {
@@ -110,13 +120,17 @@ const TransactionsController = {
   },
   create: async (ctx) => {
     const {
-      groupId, operationAmount, description, currency,
+      groupId, operationAmount, description, currency, categoryId,
     } = ctx.request.body;
 
-    const customCard = await CardRepository.findOne({
+    let customCard = await CardRepository.findOne({
       owner: 1,
       groupId,
     });
+
+    if (!customCard) {
+      customCard = await createCustomCard({ groupId });
+    }
 
     const transaction = await TransactionRepository.create({
       cardId: customCard.id,
@@ -125,6 +139,7 @@ const TransactionsController = {
       operationAmount,
       description,
       currency,
+      categoryId,
     });
 
     return ctx.send(200, transaction);
