@@ -1,4 +1,4 @@
-const { groupBy } = require('lodash');
+const { groupBy, uniq } = require('lodash');
 const { DateTime } = require('luxon');
 const { uuid } = require('uuidv4');
 
@@ -51,12 +51,22 @@ const getFilters = async (cards) => {
   const banks = await Promise.all(banksPromises);
 
   const cardIds = cards.map((card) => card.id);
+  const groupIds = uniq(cards.map((card) => card.groupId));
+
+  // TODO:
+  const filterGroups = Object.values(groups).map((group) => {
+    if (groupIds.includes(group.id)) {
+      return group;
+    }
+    return null;
+  }).filter(Boolean);
 
   const [minDate] = await TransactionRepository.getDate(cardIds, 'min');
   const [maxDate] = await TransactionRepository.getDate(cardIds, 'max');
   const categories = await CategoryRepository.getDistinct(cardIds);
 
   return {
+    groups: filterGroups,
     banks,
     cards,
     categories,
