@@ -53,7 +53,7 @@ const getFilters = async (cards, userId) => {
   const cardIds = cards.map((card) => card.id);
   const groupIds = uniq(cards.map((card) => card.groupId));
 
-  const groups = await getGroups({ userId, groupIds });
+  const groups = await getGroups({ userId, groupIds: groupIds.join(',') });
 
   const [minDate] = await TransactionRepository.getDate(cardIds, 'min');
   const [maxDate] = await TransactionRepository.getDate(cardIds, 'max');
