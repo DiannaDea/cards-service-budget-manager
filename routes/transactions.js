@@ -13,6 +13,7 @@ transactionsRouter.route({
   validate: {
     query: {
       groupIds: Joi.string().required(),
+      userId: Joi.string().required(),
     },
   },
   handler: [TransactionsController.getFilters],

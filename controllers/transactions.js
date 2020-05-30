@@ -8,8 +8,6 @@ const CardRepository = require('../repositories/card');
 const CategoryRepository = require('../repositories/category');
 const { getGroups } = require('../utils');
 
-const groups = require('../groups');
-
 const joinBank = (transactions, userId) => {
   const promises = transactions.map(async (transactionInfo) => {
     const card = await transactionInfo.getCard();
@@ -48,27 +46,21 @@ const processTransactions = async (filters, pagination, userId) => {
   };
 };
 
-const getFilters = async (cards) => {
+const getFilters = async (cards, userId) => {
   const banksPromises = cards.map((card) => card.getBank());
   const banks = await Promise.all(banksPromises);
 
   const cardIds = cards.map((card) => card.id);
   const groupIds = uniq(cards.map((card) => card.groupId));
 
-  // TODO:
-  const filterGroups = Object.values(groups).map((group) => {
-    if (groupIds.includes(group.id)) {
-      return group;
-    }
-    return null;
-  }).filter(Boolean);
+  const groups = await getGroups({ userId, groupIds });
 
   const [minDate] = await TransactionRepository.getDate(cardIds, 'min');
   const [maxDate] = await TransactionRepository.getDate(cardIds, 'max');
   const categories = await CategoryRepository.getDistinct(cardIds);
 
   return {
-    groups: filterGroups,
+    groups,
     banks,
     cards,
     categories,
@@ -122,12 +114,12 @@ const TransactionsController = {
     return ctx.send(200, transactions);
   },
   getFilters: async (ctx) => {
-    const { groupIds } = ctx.request.query;
+    const { groupIds, userId } = ctx.request.query;
 
     const cards = await CardRepository
       .findAll({ groupId: groupIds.split(',') });
 
-    const filters = await getFilters(cards);
+    const filters = await getFilters(cards, userId);
     return ctx.send(200, filters);
   },
   create: async (ctx) => {
