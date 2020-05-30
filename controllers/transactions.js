@@ -6,10 +6,11 @@ const TransactionRepository = require('../repositories/transaction');
 const BanksRepository = require('../repositories/bank');
 const CardRepository = require('../repositories/card');
 const CategoryRepository = require('../repositories/category');
+const { getGroups } = require('../utils');
 
 const groups = require('../groups');
 
-const joinBank = (transactions) => {
+const joinBank = (transactions, userId) => {
   const promises = transactions.map(async (transactionInfo) => {
     const card = await transactionInfo.getCard();
     const bank = await card.getBank();
@@ -17,9 +18,10 @@ const joinBank = (transactions) => {
     const category = await transactionInfo.getCategory();
     const transaction = transactionInfo.get({ plain: true });
 
-    // TODO: request group (card.groupId)
+    const group = await getGroups({ userId, groupIds: card.groupId });
+
     Object.assign(transaction, {
-      card, bank, category, group: groups[card.groupId],
+      card, bank, category, group: group ? group[0] : null,
     });
 
     return transaction;
@@ -28,13 +30,13 @@ const joinBank = (transactions) => {
   return Promise.all(promises);
 };
 
-const processTransactions = async (filters, pagination) => {
+const processTransactions = async (filters, pagination, userId) => {
   const transactions = await TransactionRepository.findAllInDateRange(
     filters,
     pagination,
   );
 
-  await joinBank(transactions.rows);
+  await joinBank(transactions.rows, userId);
 
   const grouped = groupBy(transactions.rows, (transaction) => DateTime
     .fromISO(transaction.date.toISOString())
@@ -89,7 +91,7 @@ const createCustomCard = async ({ groupId }) => {
 const TransactionsController = {
   getAll: async (ctx) => {
     const {
-      groupIds, cardIds, bankIds, categoryIds, dateStart, dateEnd, limit, page,
+      groupIds, cardIds, bankIds, categoryIds, dateStart, dateEnd, limit, page, userId,
     } = ctx.request.query;
 
     const cards = await CardRepository
@@ -116,7 +118,7 @@ const TransactionsController = {
       limit: parseInt(limit, 10),
     };
 
-    const transactions = await processTransactions(filters, pagination);
+    const transactions = await processTransactions(filters, pagination, userId);
     return ctx.send(200, transactions);
   },
   getFilters: async (ctx) => {

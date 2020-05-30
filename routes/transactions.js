@@ -31,6 +31,7 @@ transactionsRouter.route({
       categoryIds: Joi.string(),
       limit: Joi.string().required(),
       page: Joi.string().required(),
+      userId: Joi.string().required(),
     },
   },
   handler: [TransactionsController.getAll],
