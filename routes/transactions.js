@@ -43,11 +43,11 @@ transactionsRouter.route({
   validate: {
     type: 'json',
     body: {
-      groupId: Joi.string().guid({ version: 'uuidv4' }).required(),
+      groupId: Joi.string().required(),
       operationAmount: Joi.number().required(),
       description: Joi.string().required(),
       currency: Joi.string().required(),
-      categoryId: Joi.string().guid({ version: 'uuidv4' }).required(),
+      categoryId: Joi.string().required(),
     },
   },
   handler: [TransactionsController.create],
@@ -59,14 +59,14 @@ transactionsRouter.route({
   validate: {
     type: 'json',
     params: {
-      id: Joi.string().guid({ version: 'uuidv4' }).required(),
+      id: Joi.string().required(),
     },
     body: {
-      groupId: Joi.string().guid({ version: 'uuidv4' }).required(),
+      groupId: Joi.string().required(),
       operationAmount: Joi.number(),
       description: Joi.string(),
       currency: Joi.string(),
-      categoryId: Joi.string().guid({ version: 'uuidv4' }),
+      categoryId: Joi.string(),
     },
   },
   handler: [TransactionsController.checkIfExists, TransactionsController.update],
@@ -77,7 +77,7 @@ transactionsRouter.route({
   path: '/:id',
   validate: {
     params: {
-      id: Joi.string().guid({ version: 'uuidv4' }).required(),
+      id: Joi.string().required(),
     },
   },
   handler: [TransactionsController.checkIfExists, TransactionsController.getOne],
@@ -88,7 +88,7 @@ transactionsRouter.route({
   path: '/:id',
   validate: {
     params: {
-      id: Joi.string().guid({ version: 'uuidv4' }).required(),
+      id: Joi.string().required(),
     },
   },
   handler: [TransactionsController.checkIfExists, TransactionsController.delete],

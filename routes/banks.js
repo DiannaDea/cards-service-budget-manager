@@ -13,7 +13,7 @@ banksRouter.route({
   validate: {
     type: 'json',
     params: {
-      id: Joi.string().guid({ version: 'uuidv4' }).required(),
+      id: Joi.string().required(),
     },
   },
   handler: [BanksController.getCards],
@@ -36,7 +36,7 @@ banksRouter.route({
   path: '/:id',
   validate: {
     params: {
-      id: Joi.string().guid({ version: 'uuidv4' }).required(),
+      id: Joi.string().required(),
     },
   },
   handler: [BanksController.delete],
