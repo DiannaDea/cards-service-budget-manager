@@ -1,17 +1,18 @@
 const { get } = require('lodash');
 const CardRepository = require('../repositories/card');
-const groups = require('../groups');
+const { getGroups } = require('../utils');
 
-const joinBanks = (cards) => {
+const joinBanks = (cards, userId) => {
   const promises = cards.map(async (card) => {
     const bank = await card.getBank();
     const cardInfo = card.get({ plain: true });
 
+    const group = await getGroups({ userId, groupIds: card.groupId });
+
     return {
       ...cardInfo,
       bank,
-      // TODO: request group from API
-      group: groups[card.groupId],
+      group: group ? group[0] : null,
     };
   });
 
@@ -38,13 +39,13 @@ const groupByBanks = (cards) => cards.reduce((grouped, card) => {
 
 const BanksController = {
   getAll: async (ctx) => {
-    const { groupIds } = ctx.request.query;
+    const { groupIds, userId } = ctx.request.query;
 
     const groupCards = await CardRepository.findAll({
       groupId: groupIds.split(','),
     });
 
-    const withBanks = await joinBanks(groupCards);
+    const withBanks = await joinBanks(groupCards, userId);
 
     const groupedByBanks = groupByBanks(withBanks);
     return ctx.send(200, Object.values(groupedByBanks));

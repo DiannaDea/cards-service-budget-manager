@@ -25,6 +25,7 @@ banksRouter.route({
   validate: {
     query: {
       groupIds: Joi.string().required(),
+      userId: Joi.string().required(),
     },
   },
   handler: [BanksController.getAll],
